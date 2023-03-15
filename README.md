@@ -20,7 +20,7 @@ sum轉換分*2.5
 3. 競品之間的比較。比如：露天拍賣、蝦皮購物、旋轉拍賣。
 
 
-[UI](https://www.canva.com/design/DAFM2A_qoD8/XrRoYCi1IhEAYtawAqfBOQ/view?utm_content=DAFM2A_qoD8&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink)
+[UI](https://xd.adobe.com/view/fd6d89da-caaa-4bb6-99f9-fb2be37e509a-a83e/screen/64013c61-f377-4cbb-a040-6cc392c437ae/)
 
 <img width="680" alt="sus_1" src="https://user-images.githubusercontent.com/39666798/225238175-1d09000d-2fac-497a-9d9e-717649797711.png">
 
