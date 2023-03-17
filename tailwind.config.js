@@ -15,12 +15,38 @@ module.exports = {
       }
     },
     screens: {
-      '2xl': {'max': '1366px'},
-      'xl': {'max': '1200px'},
-      'lg': {'max': '992px'},
-      'md': {'max': '768px'},
-      'sm': {'max': '576px'},
+      '2xl': {'min': '1366px'},
+      'xl': {'min': '1200px'},
+      'lg': {'min': '992px'},
+      'md': {'min': '768px'},
+      'sm': {'min': '576px'},
     },
   },
-  plugins: [],
+  corePlugins: {
+    container: false
+  },
+  plugins: [
+    function ({ addComponents }) {
+      addComponents({
+        '.container': {
+          maxWidth: '100%',
+          '@screen sm': {
+            maxWidth: '540px',
+          },
+          '@screen md': {
+            maxWidth: '720px',
+          },
+          '@screen lg': {
+            maxWidth: '872px',
+          },
+          '@screen xl': {
+            maxWidth: '1088px',
+          },
+          '@screen 2xl': {
+            maxWidth: '1088px',
+          },
+        }
+      })
+    }
+  ],
 }
