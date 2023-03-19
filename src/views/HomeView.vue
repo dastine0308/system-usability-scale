@@ -1,5 +1,5 @@
 <script setup>
-import ServeyForm from '../component/ServeyForm.vue'
+import SurveyForm from '../component/SurveyForm.vue'
 </script>
 
 <template>
@@ -14,8 +14,8 @@ import ServeyForm from '../component/ServeyForm.vue'
         <div class="form-item">
         </div>
       </div> -->
-      <ServeyForm />
-      <button class="bg-gradient-to-r from-[#1489D1] to-[#20B6B2] rounded-[20px] sm:min-w-[116px] min-w-[352px] min-h-[40px] text-white">
+      <SurveyForm />
+      <button class="bg-gradient-to-r from-[#1489D1] to-[#20B6B2] rounded-[20px] min-w-[116px] md:min-w-[352px] min-h-[40px] text-white mt-[40px]">
         送出
       </button>
     </form>
