@@ -1,5 +1,10 @@
 <script setup>
+    import { useRouter } from'vue-router'
     import { reactive, ref } from 'vue'
+    
+    const router = useRouter()
+
+    let score = ref(0)
 
     const qaList = reactive([
         {
@@ -47,66 +52,86 @@
     const radioBtnList = reactive([
         {
             label: '非常不同意',
-            value: '1'
+            value: 1
         },
         {
             label: '不同意',
-            value: '2'
+            value: 2
         },
         {
             label: '普通/不知道',
-            value: '3'
+            value: 3
         },
         {
             label: '同意',
-            value: '4'
+            value: 4
         },
         {
             label: '非常同意',
-            value: '5'
+            value: 5
         },
     ])
+
+    const handleSubmit = () => {
+        const sum = qaList.map((el, index)=>(index % 2 > 0) ? (5 - el.ans) : (el.ans - 1)).reduce((accumulator, currentValue) => {
+            return accumulator + currentValue
+        }, 0)
+        score = sum * 2.5
+        sessionStorage.setItem('score', score)
+        router.push('/result')
+    }
 </script>
 
 <template>
-    <div class="overflow-hidden bg-white sm:rounded-lg">
-       <div class="grid grid-cols-2 gap-4 mb-[10px]">
-            <ul class="col-start-2 flex flex-row">
-                <li class="text-sm basis-1/5 text-center" v-for="item in radioBtnList" :key="item.value">{{ item.label }}</li>
-            </ul>
-        </div>
-        <div class="border-gray-200">
-            <div v-for="(qa, qaIdx) in qaList" :key="qaIdx" class="grid grid-cols-2 gap-4 p-[16px]" :class="{'bg-gray-50': qaIdx%2 === 0}">
-                <p>{{ qa.label }}</p>
+    <form>
+        <div class="overflow-hidden bg-white sm:rounded-lg">
+            <div class="grid grid-cols-2 gap-4 mb-[10px] pr-[16px]">
                 <ul class="col-start-2 flex flex-row">
-                    <li class="basis-1/5 text-center" v-for="(item, idx) in radioBtnList" :key="idx">
-                        <label
-                            class="relative flex cursor-pointer items-center rounded-full p-3"
-                            for="qaIdx"
-                        >
-                            <input
-                                id="qaIdx"
-                                name="`ans_${qaIdx}`"
-                                v-model="qaList[qaIdx].ans"
-                                type="radio"
-                                class="absolute left-[calc((100%-1.25rem)/2)] before:content[''] peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-[#4CAAF5] transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-[#4CAAF5] checked:before:bg-[#4CAAF5] hover:before:opacity-10"
-                            />
-                            <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-[#4CAAF5] opacity-0 transition-opacity peer-checked:opacity-100">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-3.5 w-3.5"
-                                    viewBox="0 0 16 16"
-                                    fill="currentColor"
-                                >
-                                    <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
-                                </svg>
-                            </div>
-                        </label>
-                    </li>
+                    <li class="text-sm basis-1/5 text-center font-semibold" v-for="item in radioBtnList" :key="item.value">{{ item.label }}</li>
                 </ul>
             </div>
+            <div class="border-gray-200">
+                <div v-for="(qa, qaIdx) in qaList" :key="qaIdx" class="grid grid-cols-2 gap-4 p-[16px]" :class="{'bg-gray-50': qaIdx%2 === 0}">
+                    <p class="font-semibold">{{ qa.label }}</p>
+                    <ul class="col-start-2 flex flex-row">
+                        <li class="basis-1/5 text-center" v-for="(item, idx) in radioBtnList" :key="idx">
+                            <label
+                                class="relative flex cursor-pointer items-center rounded-full p-3"
+                                :for="`qa_${qaIdx}-opt_${idx}`"
+                            >
+                                <input
+                                    :id="`qa_${qaIdx}-opt_${idx}`"
+                                    v-model="qaList[qaIdx].ans"
+                                    :value="item.value"
+                                    type="radio"
+                                    class="absolute left-[calc((100%-1.25rem)/2)] before:content[''] peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-[#4CAAF5] transition-all bg-white before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-[#4CAAF5] checked:before:bg-[#4CAAF5] hover:before:opacity-10"
+                                />
+                                <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-[#4CAAF5] opacity-0 transition-opacity peer-checked:opacity-100">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-3.5 w-3.5"
+                                        viewBox="0 0 16 16"
+                                        fill="currentColor"
+                                    >
+                                        <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
+                                    </svg>
+                                </div>
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </div>
+        <div class="flex w-[100%] mt-[40px]">
+            <button 
+                class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE]  disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
+                :disabled="qaList.some((el)=>!el.ans)"
+                @click="handleSubmit"
+            >
+                送出
+            </button>
+        </div>
+    </form>
 </template>
 
 <style lang="scss" scoped>
