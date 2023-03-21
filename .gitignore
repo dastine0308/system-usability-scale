@@ -1,0 +1,16 @@
+.DS_Store
+node_modules
+/dist
+
+npm-debug.log*
+yarn-debug.log*
+
+#Maven
+/target
+package-lock.json
+
+#log
+*.log
+
+#cache
+npm

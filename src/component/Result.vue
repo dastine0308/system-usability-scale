@@ -1,82 +1,61 @@
 <script setup>
 import { useRouter } from'vue-router'
-import { reactive, ref, onBeforeMount, watchEffect } from 'vue'
+import { reactive, ref } from 'vue'
 
-const router = useRouter();
+const score = ref(0)
+score.value = parseInt(sessionStorage.getItem('score'))
 
-let score = ref(0)
-
-const resultGroup = reactive([
-  {
-    key: 'susScore',
+const resultGroup = reactive({
+  susScore: {
     title: 'SUS Score',
     value: '',
     color: '#333333'
   },
-  {
-    key: 'grade',
+  grade: {
     title: 'Grade',
     value: '',
     color: '#333333'
   },
-  {
-    key: 'nps',
+  nps: {
     title: 'NPS',
     value: '',
     color: '#333333'
   },
-  {
-    key: 'acceptable',
+  acceptable: {
     title: 'Acceptable',
     value: '',
     color: '#333333'
   },
-  {
-    key: 'adjective',
+  adjective: {
     title: 'Adjective',
     value: '',
     color: '#333333'
   },
-])
-
-onBeforeMount(()=>{ 
-  score = sessionStorage.getItem('score')
-  resultGroup.find((el)=>el.key === 'susScore').value = score
-  resultGroup.find((el)=>el.key === 'grade').value = getGrade(score)
-
-  resultGroup.find((el)=>el.key === 'nps').value = getNPS(score).text
-  resultGroup.find((el)=>el.key === 'nps').color = getNPS(score).color
-  
-  resultGroup.find((el)=>el.key === 'acceptable').value = getAcceptable(score).text
-  resultGroup.find((el)=>el.key === 'acceptable').color = getAcceptable(score).color
-  
-  resultGroup.find((el)=>el.key === 'adjective').value = getAdjective(score).text
-  resultGroup.find((el)=>el.key === 'adjective').color = getAdjective(score).color
 })
 
-const getGrade = (score) => {
-  switch(score) {
-    case (score > 78.8 || score <= 100):
+const getGrade = () => {
+  switch(true) {
+    case (score.value > 78.8 && score.value <= 100):
       return 'A'
-    case (score > 72.5 || score <= 78.8):
+    case (score.value > 72.5 && score.value <= 78.8):
       return 'B'
-    case (score > 62.6 || score <= 72.5):
+    case (score.value > 62.6 && score.value <= 72.5):
       return 'C'
-    case (score > 51.6 || score <= 62.6):
+    case (score.value > 51.6 && score.value <= 62.6):
       return 'D'
     default:
       return 'F'
   }
 }
 
-const getNPS = (score) => {
-  switch(score) {
-    case (score > 78.8 || score <= 100):
+const getNPS = () => {
+  switch(true) {
+    case (score.value > 78.8 && score.value <= 100):
       return {
         text: 'Promoter',
         color: '#66B743'
       }
-    case (score > 62.7 || score <= 78.8):
+    case (score.value > 62.7 && score.value <= 78.8):
       return {
         text: 'Passive',
         color: '#EFBB0E'
@@ -89,14 +68,14 @@ const getNPS = (score) => {
   }
 }
 
-const getAcceptable = (score) => {
-  switch(score) {
-    case (score > 71 || score <= 100):
+const getAcceptable = () => {
+  switch(true) {
+    case (score.value > 71 && score.value <= 100):
       return {
         text: 'Acceptable',
         color: '#66B743'
       }
-    case (score > 51.5 || score <= 71):
+    case (score.value > 51.5 && score.value <= 71):
       return {
         text: 'Marginal',
         color: '#EFBB0E'
@@ -109,29 +88,29 @@ const getAcceptable = (score) => {
   }
 }
 
-const getAdjective = (score) => {
-  switch(score) {
-    case (score > 84 || score <= 100):
+const getAdjective = () => {
+  switch(true) {
+    case (score.value > 84 && score.value <= 100):
       return {
         text: 'Best Imaginable',
         color: '#66B743'
       }
-    case (score > 80.7 || score <= 84):
+    case (score.value > 80.7 && score.value <= 84):
       return {
         text: 'Excellent',
         color: '#66B743'
       }
-    case (score > 71 || score <= 80.7):
+    case (score.value > 71 && score.value <= 80.7):
       return {
         text: 'Good',
         color: '#66B743'
       }
-    case (score > 51.5 || score <= 71):
+    case (score.value > 51.5 && score.value <= 71):
       return {
         text: 'OK',
         color: '#EFBB0E'
       }
-    case (score > 24.9 || score <= 51.5):
+    case (score.value > 24.9 && score.value <= 51.5):
       return {
         text: 'Poor',
         color: '#66B743'
@@ -144,7 +123,32 @@ const getAdjective = (score) => {
   }
 }
 
+Object.keys(resultGroup).forEach(key => {
+  switch(key) {
+    case 'susScore':
+      resultGroup[key].value = score.value
+      break
+    case 'grade':
+      resultGroup[key].value = getGrade()
+      break
+    case 'nps':
+      resultGroup[key].value = getNPS().text
+      resultGroup[key].color = getNPS().color
+      break
+    case 'acceptable':
+      resultGroup[key].value = getAcceptable().text
+      resultGroup[key].color = getAcceptable().color
+      break
+    case 'adjective':
+      resultGroup[key].value = getAdjective().text
+      resultGroup[key].color = getAdjective().color
+      break
+    default:
+      break
+  }
+})
 
+const router = useRouter()
 const handleBack = () => {
   router.back('/')
 }
