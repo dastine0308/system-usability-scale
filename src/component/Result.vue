@@ -163,7 +163,7 @@ const handleBack = () => {
         <p class="basis-1/2" :style="{'color': obj.color}">{{ obj.value }}</p>
       </li>
     </ul>
-    <div class="bg-center bg-no-repeat bg-cover bg-[url('@/assets/sus-scale-adj.jpg')] min-h-[274px]" />
+    <div class="flex m-auto bg-center bg-no-repeat bg-cover bg-[url('@/assets/sus-scale-adj.jpg')] max-w-[815px] min-h-[274px]" />
   </div>
   <div class="flex w-[100%] mt-[40px]">
     <button 
