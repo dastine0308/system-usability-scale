@@ -13,22 +13,11 @@ jobs:
       # 下载倉庫代碼
       - uses: actions/checkout@v2
 
-      # 緩存依賴
-      - name: Get npm cache
-        id: npm-cache
-        run: echo "::set-output name=dir::$(npm cache dir)"
-      - uses: actions/cache@v1
-        with:
-          path: ${{ steps.npm-cache.outputs.dir }}
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/npm.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
       # 安裝依賴
-      - run: npm
+      - run: npm install
 
       # 打包構建
-      - run: npm build
+      - run: npm run build
 
       # 發布到 GitHub Pages
       - name: Deploy
