@@ -113,7 +113,7 @@ const getAdjective = () => {
     case (score.value > 24.9 && score.value <= 51.5):
       return {
         text: 'Poor',
-        color: '#66B743'
+        color: '#FF7726'
       }
     default:
       return {
