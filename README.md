@@ -14,8 +14,8 @@ SUS 共有十個題目，奇數題為正向陳述題，偶數題爲反向陳述�
 sum轉換分*2.5
 
 
-[UI](https://xd.adobe.com/view/fd6d89da-caaa-4bb6-99f9-fb2be37e509a-a83e/screen/64013c61-f377-4cbb-a040-6cc392c437ae/)
-
+* [UI](https://xd.adobe.com/view/fd6d89da-caaa-4bb6-99f9-fb2be37e509a-a83e/screen/64013c61-f377-4cbb-a040-6cc392c437ae/)
+* [Demo](https://dastine0308.github.io/system-usability-scale/)
 <img width="680" alt="sus_1" src="https://user-images.githubusercontent.com/39666798/225238175-1d09000d-2fac-497a-9d9e-717649797711.png">
 
 
