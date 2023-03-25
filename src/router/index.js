@@ -16,7 +16,11 @@ const router = createRouter({
         { path: '/result', name: 'Result', component: Result },
       ]
     },
-  ]
+  ],
+  // 每次切換路由，頁面滾動到頂部
+  scrollBehavior () {
+    return { top: 0 }
+  }
 })
 
 export default router
