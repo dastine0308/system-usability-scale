@@ -83,19 +83,19 @@
 </script>
 
 <template>
-    <div class="overflow-hidden bg-white sm:rounded-lg">
-        <div class="grid grid-cols-2 gap-4 mb-[10px] pr-[16px]">
+    <div class="w-[100%] border-gray-200 bg-gray-50 md:bg-white rounded-lg overflow-hidden">
+        <div class="hidden md:grid grid-cols-2 gap-4 mb-[10px] pr-[16px]">
             <ul class="col-start-2 flex flex-row">
                 <li class="text-sm basis-1/5 text-center font-semibold" v-for="item in radioBtnList" :key="item.value">{{ item.label }}</li>
             </ul>
         </div>
-        <div class="border-gray-200">
-            <div v-for="(qa, qaIdx) in qaList" :key="qaIdx" class="grid grid-cols-2 gap-4 p-[16px]" :class="{'bg-gray-50': qaIdx%2 === 0}">
+        <div>
+            <div v-for="(qa, qaIdx) in qaList" :key="qaIdx" class="md:grid md:grid-cols-2 md:gap-4 p-[1.5rem] md:p-[1rem]" :class="{'md:bg-gray-50': qaIdx%2 === 0}">
                 <p class="font-semibold">{{ qa.label }}</p>
-                <ul class="col-start-2 flex flex-row">
-                    <li class="basis-1/5 text-center" v-for="(item, idx) in radioBtnList" :key="idx">
+                <ul class="md:col-start-2 flex flex-col md:flex-row">
+                    <li class="md:basis-1/5 flex w-[100%] mt-2 md:mt-0 bg-white md:bg-transparent" v-for="(item, idx) in radioBtnList" :key="idx">
                         <label
-                            class="relative flex cursor-pointer items-center rounded-full p-3"
+                            class="w-[100%] relative flex cursor-pointer items-center rounded-full p-3 md:m-auto"
                             :for="`qa_${qaIdx}-opt_${idx}`"
                         >
                             <input
@@ -103,9 +103,9 @@
                                 v-model="qaList[qaIdx].ans"
                                 :value="item.value"
                                 type="radio"
-                                class="absolute left-[calc((100%-1.25rem)/2)] before:content[''] peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-[#4CAAF5] transition-all bg-white before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-[#4CAAF5] checked:before:bg-[#4CAAF5] hover:before:opacity-10"
+                                class="md:absolute left-[calc((100%-1.25rem)/2)] before:content[''] peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-[#4CAAF5] transition-all bg-white before:absolute before:top-2/4 before:hidden md:before:left-2/4  md:before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-[#4CAAF5] checked:before:bg-[#4CAAF5] hover:before:opacity-10"
                             />
-                            <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-[#4CAAF5] opacity-0 transition-opacity peer-checked:opacity-100">
+                            <div class="pointer-events-none absolute top-2/4 left-[calc((1.25rem+24px)/2)] md:left-2/4 -translate-y-2/4 -translate-x-2/4 text-[#4CAAF5] opacity-0 transition-opacity peer-checked:opacity-100">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     class="h-3.5 w-3.5"
@@ -115,13 +115,14 @@
                                     <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
                                 </svg>
                             </div>
+                            <p class="ml-3 text-sm md:hidden">{{ item.label }}</p>
                         </label>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
-    <div class="flex w-[100%] mt-[40px]">
+    <div class="flex w-[80%] md:w-[100%] my-[40px]">
         <button 
             class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE]  disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
             :disabled="qaList.some((el)=>!el.ans)"

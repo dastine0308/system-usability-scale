@@ -155,7 +155,7 @@ const handleBack = () => {
 </script>
 
 <template>
-  <div>
+  <div class="p-[1.5rem]">
     <p class="font-semibold">使用李克特五分量表，非常不同意：1分、不同意：2分、普通/不知道：3分、同意：4分、非常同意：5分，共十題，奇數題為正向題，偶數題爲負向題，所以計算的時候，正向負向的計算方式會不一樣。</p>
     <ul class="my-[40px]">
       <li class="grid grid-cols-2 gap-[16px] my-[8px]" v-for="obj in resultGroup" :key="obj.key">
@@ -165,7 +165,7 @@ const handleBack = () => {
     </ul>
     <div class="flex m-auto bg-center bg-no-repeat bg-cover bg-[url('@/assets/sus-scale-adj.jpg')] max-w-[815px] min-h-[274px]" />
   </div>
-  <div class="flex w-[100%] mt-[40px]">
+  <div class="flex w-[80%] md:w-[100%] my-[40px]">
     <button 
       class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE]  disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9]"
       @click="handleBack"
