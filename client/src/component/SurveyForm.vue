@@ -1,6 +1,7 @@
 <script setup>
     import { useRouter } from'vue-router'
     import { reactive, ref } from 'vue'
+    import ResultService from '@/services/ResultService'
     
     const router = useRouter()
 
@@ -72,13 +73,20 @@
         },
     ])
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         const sum = qaList.map((el, index)=>(index % 2 > 0) ? (5 - el.ans) : (el.ans - 1)).reduce((accumulator, currentValue) => {
             return accumulator + currentValue
         }, 0)
         score.value = sum * 2.5
-        sessionStorage.setItem('score', score.value)
-        router.push('/result')
+
+        const response = await ResultService.save({
+            'score': score.value
+        })
+
+        console.log('data:', response)
+
+        // sessionStorage.setItem('score', score.value)
+        // router.push('/result')
     }
 </script>
 
@@ -125,9 +133,13 @@
     <div class="flex w-[80%] md:w-[100%] my-[40px]">
         <button 
             class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE]  disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
-            :disabled="qaList.some((el)=>!el.ans)"
             @click="handleSubmit"
         >
+        <!-- <button 
+            class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE]  disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
+            :disabled="qaList.some((el)=>!el.ans)"
+            @click="handleSubmit"
+        > -->
             送出
         </button>
     </div>
