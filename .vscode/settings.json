@@ -1,0 +1,113 @@
+{
+    "editor.detectIndentation": true,
+    "editor.tabSize": 2,
+    "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.fixAll.eslint": true, // 存檔自動解決lint問題
+    },
+    /*
+    * 為每個段落顯示不同顏色的縮進
+    */
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs":"active",
+    // eslint 支援 vue
+    "eslint.validate": [
+    "vue",
+    "vue-html",
+    "javascript",
+    "javascriptreact",
+    // "typescript",
+    // "typescriptreact",
+    // "sass",
+    // "scss",
+    ],
+    "eslint.alwaysShowStatus": true,
+    "eslint.options": {
+    "extensions": [
+    ".html",
+    ".js",
+    ".ts",
+    ".vue"
+    ]
+    },
+    "eslint.enable": true,
+    "[html]": {
+    "editor.defaultFormatter": "Vue.volar"
+    },
+    "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    // "workbench.iconTheme": "material-icon-theme",
+    "workbench.editor.enablePreview": false,
+    "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
+    // "files.autoSave": "onFocusChange",
+    // "files.autoSave": "afterDelay",
+    "files.autoSave": "off",
+    "files.eol": "\n",
+    "files.associations": {
+    "*.vue": "vue"
+    },
+    /*
+    * Emmet
+    */
+    "emmet.triggerExpansionOnTab": true,    // 按下tab即可展開emmet縮寫
+    "emmet.includeLanguages": {             // 在預設未支援的語言中啟用emmet縮寫
+    "vue-html": "html sass",
+    "vue": "html sass"
+    },
+    "emmet.syntaxProfiles": {               // 為指定的語法定義設定檔，或透過特定規則使用自己的設定檔
+    "vue": "sass"
+    },
+    /* 須安裝 TODO Highlight 套件
+    * 下載路徑：https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight
+    * 檢視所有TODO方法：快捷『F1』，輸入『TODOs』，聚焦於TODOs檢視
+    */
+    "todohighlight.keywords": [
+    "DEBUG:",
+    "REVIEW:",
+    "NOTE:",
+    {
+    "text": "TEST:",
+    "backgroundColor": "#BBFF92",
+    "overviewRulerColor": "#333"
+    },
+    {
+    "text": "API:",
+    "color": "#000",
+    },
+    {
+    "text": "HACK:",
+    "color": "#000",
+    "isWholeLine": false,
+    }
+    ],
+    /*
+    * 須安裝 NPM-Script 套件
+    * 下載路徑：https://marketplace.visualstudio.com/items?itemName=traBpUkciP.vscode-npm-scripts
+    * 安裝完畢須重啟VScode
+    */
+    "npm.scriptExplorerAction": "run",
+    "npm.packageManager": "npm",
+    /*
+    * Volar
+    */
+    "volar.autoCompleteRefs": true,
+    "volar.codeLens.scriptSetupTools": true,
+    "volar.icon.splitEditors": true,
+    /*
+    * Git
+    */
+    "diffEditor.ignoreTrimWhitespace": false,
+    "git.autofetch": true,
+    /*
+    * CSS
+    * 在 tailwind 使用 @apply 會出現 Unknow at rule，忽略此項
+    */
+    "css.lint.unknownAtRules": "ignore"
+    }
