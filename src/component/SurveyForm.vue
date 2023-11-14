@@ -1,9 +1,20 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { reactive } from 'vue'
-import { createResult } from '@/firebase'
+import { onMounted, reactive, ref } from 'vue'
+import { createResult, useLoadProjects } from '@/firebase'
+import { useToast } from "primevue/usetoast"
+import { useForm, useField } from "vee-validate";
 
+const { handleSubmit: handleLogin } = useForm();
+const { value: selectedProject, errorMessage: projectErrMsg } = useField('name', validateName)
+const { value: password, errorMessage: pwdErrMsg, setErrors  } = useField('password', validatePwd)
+const toast = useToast()
 const router = useRouter()
+
+const dropdownLoading = ref(false)
+const projectOpts = ref([])
+const modalVisible = ref(true);
+const isAdmin = ref(false)
 
 const qaList = reactive([
   {
@@ -47,7 +58,6 @@ const qaList = reactive([
     ans: null,
   },
 ])
-
 const radioBtnList = reactive([
   {
     label: '非常不同意',
@@ -80,16 +90,97 @@ const getScore = () => {
   return sum * 2.5
 }
 
-const handleSubmit = async () => {
-  const score = getScore()
-  const docId = await createResult({ score })
-  sessionStorage.setItem('docId', docId)
-  router.push('/result')
+function validateName(value) {
+  if (!value) return '請選擇專案名稱'
+  return true
 }
+
+function validatePwd(value) {
+  if (!value) return '請輸入密碼'
+  return true
+}
+
+const login = handleLogin((values) => {
+  // TEST:
+  const admin = 'VL905'
+  const emp = '0000'
+
+  if (values?.password === admin) {
+    isAdmin.value = true
+    modalVisible.value = false
+  } else if(values?.password === emp) modalVisible.value = false 
+  else setErrors('密碼錯誤')
+})
+
+const navigatePage = () => {
+  router.push('/result')
+  sessionStorage.setItem('projectName', JSON.stringify(selectedProject.value))
+}
+
+// API:
+const handleSubmit = async () => {
+  try {
+    const score = getScore()
+    await createResult(selectedProject.value.code, { score })
+    toast.add({ severity: 'success', summary: '送出成功', life: 3000 });
+  } catch(e) {
+    console.error('Error: ', e)
+  }
+}
+
+// API:
+const fetchProjectOpts = async () => {
+  try {
+    dropdownLoading.value = true
+    const resp = await useLoadProjects()
+    if(resp) {
+      projectOpts.value = JSON.parse(JSON.stringify(resp))
+    }
+    dropdownLoading.value = false
+  } catch(e) {
+    console.error('Error: ', e)
+  }
+}
+
+onMounted(()=> {
+  fetchProjectOpts()
+})
 </script>
 
 <template>
-  <div class="w-[100%] border-gray-200 bg-gray-50 md:bg-white rounded-lg overflow-hidden">
+  <Dialog
+    v-model:visible="modalVisible"
+    modal
+    :pt="{
+      mask: { style: 'backdrop-filter: blur(2px)' },
+      root: { style: 'background: transparent linear-gradient(119deg, #1489D1 0%, #20B6B2 100%) 0% 0% no-repeat padding-box', class: 'w-full md:w-[40vh] md:rounded-lg' } 
+    }"
+>
+    <template #container>
+      <form @submit="onSubmit" class="flex flex-col items-center px-20 py-8 gap-4 text-white" style="border-radius: 12px">
+        <img src="@/assets/ux_icon.jpg" class="w-[35px] h-[35px]">
+        <div class="inline-flex flex-col gap-2 w-full">
+          <label for="name" class="font-semibold">專案名稱</label>
+          <Dropdown v-model="selectedProject" :loading = "dropdownLoading" :options="projectOpts" optionLabel="name" placeholder="請選擇專案" />
+        </div>
+        <small class="p-error" id="dd-error" v-if="projectErrMsg">{{ projectErrMsg || '&nbsp;' }}</small>
+        
+        <div class="inline-flex flex-col gap-2 w-full">
+          <label for="password" class="font-semibold">密碼</label>
+          <InputText id="password" class="bg-white-alpha-20 border-none p-3" type="text" v-model="password" />
+        </div>
+        <small class="p-error" id="dd-error" v-if="pwdErrMsg">{{ pwdErrMsg || '&nbsp;' }}</small>
+        
+        <div class="flex align-items-center gap-2 w-full">
+          <Button label="登入" type="submit" @click="login" text class="p-3 w-full text-white border border-white hover:bg-white-alpha-10"></Button>
+        </div>
+      </form>
+      <Toast />
+    </template>
+  </Dialog>
+
+  <div class="w-full border-gray-200 bg-gray-50 md:bg-white rounded-lg overflow-hidden">
+    <Button v-if="isAdmin" type="button" label="測試結果" badge="?" badgeClass="p-badge-danger" outlined @click="navigatePage"/>
     <div class="hidden md:grid grid-cols-2 gap-4 mb-[10px] pr-[16px]">
       <ul class="col-start-2 flex flex-row">
         <li class="text-sm basis-1/5 text-center font-semibold" v-for="item in radioBtnList" :key="item.value">
@@ -97,58 +188,52 @@ const handleSubmit = async () => {
         </li>
       </ul>
     </div>
-    <div>
-      <div
-        v-for="(qa, qaIdx) in qaList"
-        :key="qaIdx"
-        class="md:grid md:grid-cols-2 md:gap-4 p-[1.5rem] md:p-[1rem]"
-        :class="{ 'md:bg-gray-50': qaIdx % 2 === 0 }"
-      >
-        <p class="font-semibold">{{ qa.label }}</p>
-        <ul class="md:col-start-2 flex flex-col md:flex-row">
-          <li
-            class="md:basis-1/5 flex w-[100%] mt-2 md:mt-0 bg-white md:bg-transparent"
-            v-for="(item, idx) in radioBtnList"
-            :key="idx"
+    <div
+      v-for="(qa, qaIdx) in qaList"
+      :key="qaIdx"
+      class="md:grid md:grid-cols-2 md:gap-4 p-[1.5rem] md:p-[1rem]"
+      :class="{ 'md:bg-gray-50': qaIdx % 2 === 0 }"
+    >
+      <p class="font-semibold">{{ qa.label }}</p>
+      <ul class="md:col-start-2 flex flex-col md:flex-row">
+        <li
+          class="md:basis-1/5 flex w-[100%] mt-2 md:mt-0 bg-white md:bg-transparent"
+          v-for="(item, idx) in radioBtnList"
+          :key="idx"
+        >
+          <label
+            class="w-[100%] relative flex cursor-pointer items-center rounded-full p-3 md:m-auto"
+            :for="`qa_${qaIdx}-opt_${idx}`"
           >
-            <label
-              class="w-[100%] relative flex cursor-pointer items-center rounded-full p-3 md:m-auto"
-              :for="`qa_${qaIdx}-opt_${idx}`"
+            <input
+              :id="`qa_${qaIdx}-opt_${idx}`"
+              v-model="qaList[qaIdx].ans"
+              :value="item.value"
+              type="radio"
+              class="md:absolute left-[calc((100%-1.25rem)/2)] before:content[''] peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-[#4CAAF5] transition-all bg-white before:absolute before:top-2/4 before:hidden md:before:left-2/4 md:before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-[#4CAAF5] checked:before:bg-[#4CAAF5] hover:before:opacity-10"
+            />
+            <div
+              class="pointer-events-none absolute top-2/4 left-[calc((1.25rem+24px)/2)] md:left-2/4 -translate-y-2/4 -translate-x-2/4 text-[#4CAAF5] opacity-0 transition-opacity peer-checked:opacity-100"
             >
-              <input
-                :id="`qa_${qaIdx}-opt_${idx}`"
-                v-model="qaList[qaIdx].ans"
-                :value="item.value"
-                type="radio"
-                class="md:absolute left-[calc((100%-1.25rem)/2)] before:content[''] peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-[#4CAAF5] transition-all bg-white before:absolute before:top-2/4 before:hidden md:before:left-2/4 md:before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-[#4CAAF5] checked:before:bg-[#4CAAF5] hover:before:opacity-10"
-              />
-              <div
-                class="pointer-events-none absolute top-2/4 left-[calc((1.25rem+24px)/2)] md:left-2/4 -translate-y-2/4 -translate-x-2/4 text-[#4CAAF5] opacity-0 transition-opacity peer-checked:opacity-100"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
-                  <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
-                </svg>
-              </div>
-              <p class="ml-3 text-sm md:hidden">{{ item.label }}</p>
-            </label>
-          </li>
-        </ul>
-      </div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
+                <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
+              </svg>
+            </div>
+            <p class="ml-3 text-sm md:hidden">{{ item.label }}</p>
+          </label>
+        </li>
+      </ul>
     </div>
   </div>
-  <div class="flex w-[80%] md:w-[100%] my-[40px]">
-    <button
-      class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE] disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
+  <div class="flex w-full my-[40px]">
+    <button 
+      class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE]  disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
+      :disabled="qaList.some((el)=>!el.ans) || !selectedProject"
       @click="handleSubmit"
     >
-      <!-- <button 
-            class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE]  disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
-            :disabled="qaList.some((el)=>!el.ans)"
-            @click="handleSubmit"
-        > -->
       送出
     </button>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style></style>

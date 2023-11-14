@@ -11,8 +11,10 @@
     "firebase": "^10.5.2",
     "moment": "2.29.4",
     "pinia": "^2.0.32",
+    "primeicons": "6.0.1",
     "primevue": "3.39.0",
-    "vue": "^3.2.47",
+    "vee-validate": "4.11.8",
+    "vue": "^3.3",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {

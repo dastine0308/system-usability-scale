@@ -4,6 +4,7 @@ module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
+    './node_modules/primevue/**/*.{vue,js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -13,7 +14,21 @@ module.exports = {
         lg: ['20px', '28px'],
         xl: ['24px', '32px'],
         xxl: ['32px', '45px'],
-      }
+      },
+      colors: {
+        danger: {
+          DEFAULT: '#F77878',
+        },
+        warning: {
+          DEFAULT: '#FF7726',
+        },
+        info: {
+          DEFAULT: '#EFBB0E',
+        },
+        success: {
+          DEFAULT: '#66B743',
+        },
+      },
     },
     screens: {
       '2xl': {'min': '1366px'},
