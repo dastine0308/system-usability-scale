@@ -23,7 +23,7 @@ export const createResult = async (code, input) => {
       ...input, 
       testDate: new Date() 
     })
-    console.log(docRef.id)
+    return docRef.id
   } catch (e) {
     console.error('Error adding document: ', e)
   }

@@ -118,11 +118,13 @@ const navigatePage = () => {
 }
 
 // API:
-const handleSubmit = async () => {
+const onSubmit = async () => {
   try {
     const score = getScore()
-    await createResult(selectedProject.value.code, { score })
-    toast.add({ severity: 'success', summary: '送出成功', life: 3000 });
+    const id = await createResult(selectedProject.value.code, { score })
+    console.log('送出成功', id)
+    toast.add({ severity: 'success', summary: '送出成功', life: 3000 })
+    qaList.map((el)=>el.ans = null)
   } catch(e) {
     console.error('Error: ', e)
   }
@@ -175,7 +177,6 @@ onMounted(()=> {
           <Button label="登入" type="submit" @click="login" text class="p-3 w-full text-white border border-white hover:bg-white-alpha-10"></Button>
         </div>
       </form>
-      <Toast />
     </template>
   </Dialog>
 
@@ -229,11 +230,12 @@ onMounted(()=> {
     <button 
       class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE]  disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
       :disabled="qaList.some((el)=>!el.ans) || !selectedProject"
-      @click="handleSubmit"
+      @click="onSubmit"
     >
       送出
     </button>
   </div>
+  <Toast />
 </template>
 
 <style></style>
