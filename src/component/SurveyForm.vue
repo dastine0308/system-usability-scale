@@ -155,7 +155,7 @@ onMounted(()=> {
     modal
     :pt="{
       mask: { style: 'backdrop-filter: blur(2px)' },
-      root: { style: 'background: transparent linear-gradient(119deg, #1489D1 0%, #20B6B2 100%) 0% 0% no-repeat padding-box', class: 'w-full md:w-[40vh] md:rounded-lg' } 
+      root: { style: 'background: transparent linear-gradient(119deg, #1489D1 0%, #20B6B2 100%) 0% 0% no-repeat padding-box', class: 'rounded-lg' } 
     }"
 >
     <template #container>
@@ -163,19 +163,15 @@ onMounted(()=> {
         <img src="@/assets/ux_icon.jpg" class="w-[35px] h-[35px]">
         <div class="inline-flex flex-col gap-2 w-full">
           <label for="name" class="font-semibold">專案名稱</label>
-          <Dropdown v-model="selectedProject" :loading = "dropdownLoading" :options="projectOpts" optionLabel="name" placeholder="請選擇專案" />
+          <Dropdown v-model="selectedProject" :loading = "dropdownLoading" :options="projectOpts" optionLabel="name" placeholder="請選擇專案" class="md:w-full"/>
+          <small class="p-error" id="dd-error" v-if="projectErrMsg">{{ projectErrMsg || '&nbsp;' }}</small>
         </div>
-        <small class="p-error" id="dd-error" v-if="projectErrMsg">{{ projectErrMsg || '&nbsp;' }}</small>
-        
         <div class="inline-flex flex-col gap-2 w-full">
           <label for="password" class="font-semibold">密碼</label>
           <InputText id="password" class="bg-white-alpha-20 border-none p-3" type="text" v-model="password" />
+          <small class="p-error" id="dd-error" v-if="pwdErrMsg">{{ pwdErrMsg || '&nbsp;' }}</small>
         </div>
-        <small class="p-error" id="dd-error" v-if="pwdErrMsg">{{ pwdErrMsg || '&nbsp;' }}</small>
-        
-        <div class="flex align-items-center gap-2 w-full">
-          <Button label="登入" type="submit" @click="login" text class="p-3 w-full text-white border border-white hover:bg-white-alpha-10"></Button>
-        </div>
+        <Button label="登入" type="submit" @click="login" text class="p-3 w-full text-white border border-white hover:bg-white-alpha-10"></Button>
       </form>
     </template>
   </Dialog>
