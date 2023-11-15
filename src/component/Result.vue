@@ -145,8 +145,8 @@ const handleBack = () => {
     </p>
     <div class="my-[40px]">
       <DataTable :value="results" tableStyle="min-width: 50rem" lazzy :loading="loading">
-        <Column field="rowIdx" header="編號" sortable style="width: 20%"></Column>
-        <Column field="date" header="測試日期" sortable style="width: 20%"></Column>
+        <Column field="rowIdx" header="編號" sortable style="width: 10%"></Column>
+        <Column field="date" header="測試日期" sortable style="width: 25%"></Column>
         <Column field="nps" header="NPS">
           <template #body="{data}">
             <div class="flex items-center">
@@ -163,7 +163,7 @@ const handleBack = () => {
             </div>
           </template>
         </Column>
-        <Column field="adjective" header="Adjective" style="width: 20%">
+        <Column field="adjective" header="Adjective" style="width: 15%">
           <template #body="{data}">
             <div class="flex items-center">
               <Badge :class="data.adjective.bedgeStyle" :pt="{root: { class: 'rounded-full w-2 h-2 mr-3'}}" />
@@ -171,14 +171,14 @@ const handleBack = () => {
             </div>
           </template>
         </Column>
-        <Column field="grade" header="Grade" style="width: 20%">
+        <Column field="grade" header="Grade" style="width: 10%">
           <template #body="{data}">
             {{ data.grade }}
           </template>
         </Column>
         <Column field="score" header="SUS Score" sortable style="width: 20%" >
           <template #body="{data}">
-            <p :class="{'text-danger': data.score < 60}">{{ data.score }}</p>
+            <p :class="{'text-danger': data.score < 68}">{{ data.score }}</p>
           </template>
         </Column>
         <ColumnGroup type="footer">

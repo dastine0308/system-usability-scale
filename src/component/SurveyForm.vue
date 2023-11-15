@@ -160,7 +160,7 @@ onMounted(()=> {
 >
     <template #container>
       <form @submit="onSubmit" class="flex flex-col items-center px-20 py-8 gap-4 text-white" style="border-radius: 12px">
-        <img src="@/assets/ux_icon.jpg" class="w-[35px] h-[35px]">
+        <img src="@/assets/logo_favicon_white.svg" class="w-[35px] h-[35px]">
         <div class="inline-flex flex-col gap-2 w-full">
           <label for="name" class="font-semibold">專案名稱</label>
           <Dropdown v-model="selectedProject" :loading = "dropdownLoading" :options="projectOpts" optionLabel="name" placeholder="請選擇專案" class="md:w-full"/>
