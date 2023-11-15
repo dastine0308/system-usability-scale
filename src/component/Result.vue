@@ -1,151 +1,135 @@
 <script setup>
-import { useRouter } from'vue-router'
-import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { ref, computed, watchEffect } from 'vue'
+import { useLoadResults } from '@/firebase'
+import moment from 'moment'
 
-const score = ref(0)
-score.value = parseInt(sessionStorage.getItem('score'))
+const results = ref()
+const loading = ref(false)
 
-const resultGroup = reactive({
-  susScore: {
-    title: 'SUS Score',
-    value: '',
-    color: '#333333'
-  },
-  grade: {
-    title: 'Grade',
-    value: '',
-    color: '#333333'
-  },
-  nps: {
-    title: 'NPS',
-    value: '',
-    color: '#333333'
-  },
-  acceptable: {
-    title: 'Acceptable',
-    value: '',
-    color: '#333333'
-  },
-  adjective: {
-    title: 'Adjective',
-    value: '',
-    color: '#333333'
-  },
+const average = computed(()=> {
+  if(!results.value || results.value.length === 0) return 0
+  const sum = results.value.map((el)=>(el.score)).reduce((accumulator, currentValue) => (accumulator + currentValue), 0)
+  return (sum / results.value.length).toFixed(2)
 })
 
-const getGrade = () => {
-  switch(true) {
-    case (score.value > 78.8 && score.value <= 100):
+const getGrade = score => {
+  switch (true) {
+    case score > 78.8 && score <= 100:
       return 'A'
-    case (score.value > 72.5 && score.value <= 78.8):
+    case score > 72.5 && score <= 78.8:
       return 'B'
-    case (score.value > 62.6 && score.value <= 72.5):
+    case score > 62.6 && score <= 72.5:
       return 'C'
-    case (score.value > 51.6 && score.value <= 62.6):
+    case score > 51.6 && score <= 62.6:
       return 'D'
     default:
       return 'F'
   }
 }
 
-const getNPS = () => {
-  switch(true) {
-    case (score.value > 78.8 && score.value <= 100):
+const getNPS = score => {
+  switch (true) {
+    case score > 78.8 && score <= 100:
       return {
         text: 'Promoter',
-        color: '#66B743'
+        bedgeStyle: 'bg-success',
       }
-    case (score.value > 62.7 && score.value <= 78.8):
+    case score > 62.7 && score <= 78.8:
       return {
         text: 'Passive',
-        color: '#EFBB0E'
+        bedgeStyle: 'bg-info',
       }
     default:
       return {
         text: 'Detractor',
-        color: '#FF7726'
+        bedgeStyle: 'bg-warning',
       }
   }
 }
 
-const getAcceptable = () => {
-  switch(true) {
-    case (score.value > 71 && score.value <= 100):
+const getAcceptable = score => {
+  switch (true) {
+    case score > 71 && score <= 100:
       return {
         text: 'Acceptable',
-        color: '#66B743'
+        bedgeStyle: 'bg-success',
       }
-    case (score.value > 51.5 && score.value <= 71):
+    case score > 51.5 && score <= 71:
       return {
         text: 'Marginal',
-        color: '#EFBB0E'
+        bedgeStyle: 'bg-info',
       }
     default:
       return {
         text: 'Not Acceptable',
-        color: '#FF7726'
+        bedgeStyle: 'bg-warning',
       }
   }
 }
 
-const getAdjective = () => {
-  switch(true) {
-    case (score.value > 84 && score.value <= 100):
+const getAdjective = score => {
+  switch (true) {
+    case score > 84 && score <= 100:
       return {
         text: 'Best Imaginable',
-        color: '#66B743'
+        bedgeStyle: 'bg-success',
       }
-    case (score.value > 80.7 && score.value <= 84):
+    case score > 80.7 && score <= 84:
       return {
         text: 'Excellent',
-        color: '#66B743'
+        bedgeStyle: 'bg-success',
       }
-    case (score.value > 71 && score.value <= 80.7):
+    case score > 71 && score <= 80.7:
       return {
         text: 'Good',
-        color: '#66B743'
+        bedgeStyle: 'bg-success',
       }
-    case (score.value > 51.5 && score.value <= 71):
+    case score > 51.5 && score <= 71:
       return {
         text: 'OK',
-        color: '#EFBB0E'
+        bedgeStyle: 'bg-info',
       }
-    case (score.value > 24.9 && score.value <= 51.5):
+    case score > 24.9 && score <= 51.5:
       return {
         text: 'Poor',
-        color: '#FF7726'
+        bedgeStyle: 'bg-warning',
       }
     default:
       return {
         text: 'Worst Imaginable',
-        color: '#FF7726'
+        bedgeStyle: 'bg-warning',
       }
   }
 }
 
-Object.keys(resultGroup).forEach(key => {
-  switch(key) {
-    case 'susScore':
-      resultGroup[key].value = score.value
-      break
-    case 'grade':
-      resultGroup[key].value = getGrade()
-      break
-    case 'nps':
-      resultGroup[key].value = getNPS().text
-      resultGroup[key].color = getNPS().color
-      break
-    case 'acceptable':
-      resultGroup[key].value = getAcceptable().text
-      resultGroup[key].color = getAcceptable().color
-      break
-    case 'adjective':
-      resultGroup[key].value = getAdjective().text
-      resultGroup[key].color = getAdjective().color
-      break
-    default:
-      break
+// API:
+const fetchResults = async (code) => {
+  try {
+    loading.value = true;
+    const resp = await useLoadResults(code)
+    if(resp) {
+      results.value = resp.map((el, index)=>{
+        return {
+          rowIdx: index+1,
+          date: moment(new Date(el?.testDate?.seconds*1000)).format('YYYY/MM/DD hh:mm'),
+          nps: getNPS(el.score),
+          acceptable: getAcceptable(el.score),
+          adjective: getAdjective(el.score),
+          grade: getGrade(el.score),
+          score: el.score
+        }
+      })
+    }
+    loading.value = false;
+  } catch(e) {
+    console.log('Error:', e)
   }
+}
+
+watchEffect((val)=> {
+  const query = JSON.parse(sessionStorage.getItem('projectName'))
+  fetchResults(query?.code)
 })
 
 const router = useRouter()
@@ -155,19 +139,63 @@ const handleBack = () => {
 </script>
 
 <template>
-  <div class="p-[1.5rem]">
-    <p class="font-semibold">使用李克特五分量表，非常不同意：1分、不同意：2分、普通/不知道：3分、同意：4分、非常同意：5分，共十題，奇數題為正向題，偶數題爲負向題，所以計算的時候，正向負向的計算方式會不一樣。</p>
-    <ul class="my-[40px]">
-      <li class="grid grid-cols-2 gap-[16px] my-[8px]" v-for="obj in resultGroup" :key="obj.key">
-        <p class="basis-1/2 text-right font-semibold">{{ obj.title }}</p>
-        <p class="basis-1/2" :style="{'color': obj.color}">{{ obj.value }}</p>
-      </li>
-    </ul>
-    <div class="flex m-auto bg-center bg-no-repeat bg-cover bg-[url('@/assets/sus-scale-adj.jpg')] max-w-[815px] min-h-[274px]" />
+  <div class="">
+    <p class="font-semibold">
+      使用李克特五分量表，非常不同意：1分、不同意：2分、普通/不知道：3分、同意：4分、非常同意：5分，共十題，奇數題為正向題，偶數題爲負向題，所以計算的時候，正向負向的計算方式會不一樣。
+    </p>
+    <div class="my-[40px]">
+      <DataTable :value="results" tableStyle="min-width: 50rem" lazzy :loading="loading">
+        <Column field="rowIdx" header="編號" sortable style="width: 20%"></Column>
+        <Column field="date" header="測試日期" sortable style="width: 20%"></Column>
+        <Column field="nps" header="NPS">
+          <template #body="{data}">
+            <div class="flex items-center">
+              <Badge :class="data.nps.bedgeStyle" :pt="{root: { class: 'rounded-full w-2 h-2 mr-3'}}"/>
+              {{ data.nps.text }}
+            </div>
+          </template>
+        </Column>
+        <Column field="acceptable" header="Acceptable" style="width: 20%">
+          <template #body="{data}">
+            <div class="flex items-center">
+              <Badge :class="data.acceptable.bedgeStyle" :pt="{root: { class: 'rounded-full w-2 h-2 mr-3'}}"/>
+              {{ data.acceptable.text }}
+            </div>
+          </template>
+        </Column>
+        <Column field="adjective" header="Adjective" style="width: 20%">
+          <template #body="{data}">
+            <div class="flex items-center">
+              <Badge :class="data.adjective.bedgeStyle" :pt="{root: { class: 'rounded-full w-2 h-2 mr-3'}}" />
+              {{ data.adjective.text }} 
+            </div>
+          </template>
+        </Column>
+        <Column field="grade" header="Grade" style="width: 20%">
+          <template #body="{data}">
+            {{ data.grade }}
+          </template>
+        </Column>
+        <Column field="score" header="SUS Score" sortable style="width: 20%" >
+          <template #body="{data}">
+            <p :class="{'text-danger': data.score < 60}">{{ data.score }}</p>
+          </template>
+        </Column>
+        <ColumnGroup type="footer">
+          <Row>
+            <Column footer="平均:" :colspan="6" footerStyle="text-align:right" />
+            <Column :footer="average" />
+          </Row>
+        </ColumnGroup>
+      </DataTable>
+    </div>
+    <div
+      class="flex m-auto bg-center bg-no-repeat bg-cover bg-[url('@/assets/sus-scale-adj.jpg')] max-w-[815px] min-h-[274px]"
+    />
   </div>
-  <div class="flex w-[80%] md:w-[100%] my-[40px]">
-    <button 
-      class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE]  disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9]"
+  <div class="flex w-full my-[40px]">
+    <button
+      class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE] disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9]"
       @click="handleBack"
     >
       返回
@@ -175,6 +203,4 @@ const handleBack = () => {
   </div>
 </template>
 
-<style>
-
-</style>
+<style></style>
