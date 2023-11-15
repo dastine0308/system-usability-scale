@@ -34,9 +34,8 @@ export const useLoadResults = async (code) => {
   console.log(code);
   try {
     const returnVal = []
-    const codeQuery = query(resultsCollection, where('projectCode', '==', code));
-    // const codeQuery = query(resultsCollection, where('projectCode', '==', code), orderBy('timestamp', 'desc'));
-    const querySnapshot = await getDocs(codeQuery);
+    const codeQuery = query(resultsCollection, where('projectCode', '==', code), orderBy('testDate'))
+    const querySnapshot = await getDocs(codeQuery)
     querySnapshot.forEach((doc) => {
       returnVal.push({
         id: doc.id,
