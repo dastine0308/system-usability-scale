@@ -1,21 +1,18 @@
 <script setup>
+import LoginCard from "./LoginCard.vue";
 import { useRouter } from 'vue-router'
-import { onMounted, reactive, ref } from 'vue'
-import { createResult, useLoadProjects } from '@/firebase'
+import { reactive, ref } from 'vue'
+import { createResult } from '@/api'
 import { useToast } from "primevue/usetoast"
-import { useForm, useField } from "vee-validate";
 
-const { handleSubmit: handleLogin } = useForm();
-const { value: selectedProject, errorMessage: projectErrMsg } = useField('name', validateName)
-const { value: password, errorMessage: pwdErrMsg, setErrors  } = useField('password', validatePwd)
 const toast = useToast()
 const router = useRouter()
 
-const dropdownLoading = ref(false)
-const projectOpts = ref([])
-const modalVisible = ref(true);
-const isAdmin = ref(false)
-
+const modalVisible = ref(true)
+const loginState = reactive({
+  isAdmin: false,
+  projectCode: ''
+})
 const qaList = reactive([
   {
     label: '1. 我想我會願意經常使用這個網站/產品。',
@@ -90,31 +87,15 @@ const getScore = () => {
   return sum * 2.5
 }
 
-function validateName(value) {
-  if (!value) return '請選擇專案名稱'
-  return true
-}
-
-function validatePwd(value) {
-  if (!value) return '請輸入密碼'
-  return true
-}
-
-const login = handleLogin((values) => {
-  // TEST:
-  const admin = 'VL905'
-  const emp = '0000'
-
-  if (values?.password === admin) {
-    isAdmin.value = true
-    modalVisible.value = false
-  } else if(values?.password === emp) modalVisible.value = false 
-  else setErrors('密碼錯誤')
-})
-
 const navigatePage = () => {
   router.push('/result')
-  sessionStorage.setItem('projectName', JSON.stringify(selectedProject.value))
+  sessionStorage.setItem('projectCode', JSON.stringify(loginState.projectCode))
+}
+
+const closeLoginModal = ({isAdmin, projectCode}) => {
+  modalVisible.value = false
+  loginState.isAdmin = isAdmin
+  loginState.projectCode = projectCode
 }
 
 // API:
@@ -129,55 +110,11 @@ const onSubmit = async () => {
     console.error('Error: ', e)
   }
 }
-
-// API:
-const fetchProjectOpts = async () => {
-  try {
-    dropdownLoading.value = true
-    const resp = await useLoadProjects()
-    if(resp) {
-      projectOpts.value = JSON.parse(JSON.stringify(resp))
-    }
-    dropdownLoading.value = false
-  } catch(e) {
-    console.error('Error: ', e)
-  }
-}
-
-onMounted(()=> {
-  fetchProjectOpts()
-})
 </script>
 
 <template>
-  <Dialog
-    v-model:visible="modalVisible"
-    modal
-    :pt="{
-      mask: { style: 'backdrop-filter: blur(2px)' },
-      root: { style: 'background: transparent linear-gradient(119deg, #1489D1 0%, #20B6B2 100%) 0% 0% no-repeat padding-box', class: 'rounded-lg' } 
-    }"
->
-    <template #container>
-      <form @submit="onSubmit" class="flex flex-col items-center px-20 py-8 gap-4 text-white" style="border-radius: 12px">
-        <img src="@/assets/logo_favicon_white.svg" class="w-[35px] h-[35px]">
-        <div class="inline-flex flex-col gap-2 w-full">
-          <label for="name" class="font-semibold">專案名稱</label>
-          <Dropdown v-model="selectedProject" :loading = "dropdownLoading" :options="projectOpts" optionLabel="name" placeholder="請選擇專案" class="md:w-full"/>
-          <small class="p-error" id="dd-error" v-if="projectErrMsg">{{ projectErrMsg || '&nbsp;' }}</small>
-        </div>
-        <div class="inline-flex flex-col gap-2 w-full">
-          <label for="password" class="font-semibold">密碼</label>
-          <InputText id="password" class="bg-white-alpha-20 border-none p-3" type="text" v-model="password" />
-          <small class="p-error" id="dd-error" v-if="pwdErrMsg">{{ pwdErrMsg || '&nbsp;' }}</small>
-        </div>
-        <Button label="登入" type="submit" @click="login" text class="p-3 w-full text-white border border-white hover:bg-white-alpha-10"></Button>
-      </form>
-    </template>
-  </Dialog>
-
   <div class="w-full border-gray-200 bg-gray-50 md:bg-white rounded-lg overflow-hidden">
-    <Button v-if="isAdmin" type="button" label="測試結果" badge="?" badgeClass="p-badge-danger" outlined @click="navigatePage"/>
+    <Button v-if="loginState.isAdmin" type="button" label="測試結果" badge="?" badgeClass="p-badge-danger" outlined @click="navigatePage"/>
     <div class="hidden md:grid grid-cols-2 gap-4 mb-[10px] pr-[16px]">
       <ul class="col-start-2 flex flex-row">
         <li class="text-sm basis-1/5 text-center font-semibold" v-for="item in radioBtnList" :key="item.value">
@@ -225,13 +162,25 @@ onMounted(()=> {
   <div class="flex w-full my-[40px]">
     <button 
       class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE]  disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
-      :disabled="qaList.some((el)=>!el.ans) || !selectedProject"
+      :disabled="qaList.some((el)=>!el.ans) || !loginState.projectCode"
       @click="onSubmit"
     >
       送出
     </button>
   </div>
   <Toast />
+  <Dialog
+    v-model:visible="modalVisible"
+    modal
+    :pt="{
+      mask: { style: 'backdrop-filter: blur(2px)' },
+      root: { style: 'background: transparent linear-gradient(119deg, #1489D1 0%, #20B6B2 100%) 0% 0% no-repeat padding-box', class: 'rounded-lg' } 
+    }"
+>
+    <template #container>
+      <LoginCard @closeLoginModal="closeLoginModal"/>
+    </template>
+  </Dialog>
 </template>
 
 <style></style>

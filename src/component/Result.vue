@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { ref, computed, watchEffect } from 'vue'
-import { useLoadResults } from '@/firebase'
+import { useLoadResults } from '@/api'
 import moment from 'moment'
 
 const results = ref()
@@ -127,9 +127,9 @@ const fetchResults = async (code) => {
   }
 }
 
-watchEffect((val)=> {
-  const query = JSON.parse(sessionStorage.getItem('projectName'))
-  fetchResults(query?.code)
+watchEffect(()=> {
+  const query = JSON.parse(sessionStorage.getItem('projectCode'))
+  fetchResults(query)
 })
 
 const router = useRouter()

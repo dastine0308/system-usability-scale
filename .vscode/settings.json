@@ -16,10 +16,6 @@
     "vue-html",
     "javascript",
     "javascriptreact",
-    // "typescript",
-    // "typescriptreact",
-    // "sass",
-    // "scss",
     ],
     "eslint.alwaysShowStatus": true,
     "eslint.options": {
