@@ -11,22 +11,23 @@ import ToastService from 'primevue/toastservice'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
+import Tailwind from 'primevue/passthrough/tailwind'
 
 import App from './App.vue'
-import router from './router'
+import Router from './router'
 
 import './style.css'
 import './layout.css'
-import 'primevue/resources/themes/saga-blue/theme.css';
-import 'primevue/resources/primevue.min.css';
-import 'primeicons/primeicons.css';
+import "primevue/resources/themes/saga-blue/theme.css"
+import 'primevue/resources/primevue.min.css'
+import 'primeicons/primeicons.css'
 
 const app = createApp(App)
 
-app.use(PrimeVue)
-// app.use(PrimeVue, { ripple: true , unstyled: true, pt: Tailwind })
+
+app.use(PrimeVue, { ripple: true , pt: Tailwind })
 app.use(ToastService)
-app.use(router)
+app.use(Router)
 
 app.component('DataTable', DataTable)
 app.component('Column', Column)
