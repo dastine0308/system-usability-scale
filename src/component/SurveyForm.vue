@@ -1,14 +1,13 @@
 <script setup>
-import LoginCard from "./LoginCard.vue";
 import { useRouter } from 'vue-router'
-import { reactive, ref } from 'vue'
+import { reactive, watch, getCurrentInstance } from 'vue'
 import { createResult } from '@/api'
 import { useToast } from "primevue/usetoast"
 
+const { proxy: { $user } } = getCurrentInstance()
 const toast = useToast()
 const router = useRouter()
 
-const modalVisible = ref(true)
 const loginState = reactive({
   isAdmin: false,
   projectCode: ''
@@ -89,32 +88,39 @@ const getScore = () => {
 
 const navigatePage = () => {
   router.push('/result')
-  sessionStorage.setItem('projectCode', JSON.stringify(loginState.projectCode))
 }
 
-const closeLoginModal = ({isAdmin, projectCode}) => {
-  modalVisible.value = false
-  loginState.isAdmin = isAdmin
-  loginState.projectCode = projectCode
+const resetForm = () => {
+  qaList.map((el)=>el.ans = null)
 }
 
 // API:
 const onSubmit = async () => {
   try {
     const score = getScore()
-    const id = await createResult(selectedProject.value.code, { score })
+    const id = await createResult(loginState.projectCode, { score })
     console.log('送出成功', id)
     toast.add({ severity: 'success', summary: '送出成功', life: 3000 })
-    qaList.map((el)=>el.ans = null)
+    resetForm()
   } catch(e) {
     console.error('Error: ', e)
   }
 }
+
+watch(() => $user.loginState, (val)=> {
+  if(!val || Object.keys(val).length === 0) {
+    resetForm()
+    return
+  }
+  loginState.isAdmin = val?.isAdmin
+  loginState.projectCode = val?.projectCode
+}, {deep: true, immediate: true})
+
 </script>
 
 <template>
+  <Button v-if="loginState.isAdmin" type="button" label="測試結果" badge="?" badgeClass="p-badge-danger" outlined @click="navigatePage"/>
   <div class="w-full border-gray-200 bg-gray-50 md:bg-white rounded-lg overflow-hidden">
-    <Button v-if="loginState.isAdmin" type="button" label="測試結果" badge="?" badgeClass="p-badge-danger" outlined @click="navigatePage"/>
     <div class="hidden md:grid grid-cols-2 gap-4 mb-[10px] pr-[16px]">
       <ul class="col-start-2 flex flex-row">
         <li class="text-sm basis-1/5 text-center font-semibold" v-for="item in radioBtnList" :key="item.value">
@@ -169,18 +175,6 @@ const onSubmit = async () => {
     </button>
   </div>
   <Toast />
-  <Dialog
-    v-model:visible="modalVisible"
-    modal
-    :pt="{
-      mask: { style: 'backdrop-filter: blur(2px)' },
-      root: { style: 'background: transparent linear-gradient(119deg, #1489D1 0%, #20B6B2 100%) 0% 0% no-repeat padding-box', class: 'rounded-lg' } 
-    }"
->
-    <template #container>
-      <LoginCard @closeLoginModal="closeLoginModal"/>
-    </template>
-  </Dialog>
 </template>
 
 <style></style>

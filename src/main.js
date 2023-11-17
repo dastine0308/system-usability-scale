@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -15,6 +16,7 @@ import Tailwind from 'primevue/passthrough/tailwind'
 
 import App from './App.vue'
 import Router from './router'
+import User from './plugins/user'
 
 import './style.css'
 import './layout.css'
@@ -24,10 +26,12 @@ import 'primeicons/primeicons.css'
 
 const app = createApp(App)
 
+app.use(createPinia())
 
 app.use(PrimeVue, { ripple: true , pt: Tailwind })
 app.use(ToastService)
 app.use(Router)
+app.use(User)
 
 app.component('DataTable', DataTable)
 app.component('Column', Column)

@@ -1,8 +1,10 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { ref, computed, watchEffect } from 'vue'
+import { ref, computed, onMounted, getCurrentInstance } from 'vue'
 import { useLoadResults } from '@/api'
 import moment from 'moment'
+
+const { proxy: { $user } } = getCurrentInstance()
 
 const results = ref()
 const loading = ref(false)
@@ -127,9 +129,10 @@ const fetchResults = async (code) => {
   }
 }
 
-watchEffect(()=> {
-  const query = JSON.parse(sessionStorage.getItem('projectCode'))
-  fetchResults(query)
+onMounted(()=> {
+  if($user.loginState?.projectCode) {
+    fetchResults($user.loginState?.projectCode)
+  }
 })
 
 const router = useRouter()
