@@ -116,7 +116,8 @@ VITE_AUTH_DOMAIN = "<authDomain>",
 VITE_PROJECT_ID = "<projectId>",
 VITE_STORAGE_BUCKET = "<storageBucket>",
 VITE_MESSAGING_SENDER_ID = "<messagingSenderId>",
-VITE_APP_ID = "<appId>"
+VITE_APP_ID = "<appId>",
+VITE_MEASUREMENT_ID = "<measurementId>"
 ```
     
 3. Install the Firebase tools: `npm install -g firebase-tools` and log in `firebase login`
@@ -156,8 +157,7 @@ VITE_APP_ID = "<appId>"
 |   |-- layout.css
 |   |-- main.js               # 專案的程式進入點
 |   |__ style.css
-|-- .env.development          # 環境變數，development 環境
-|-- .env.prodection           # 環境變數，production 環境
+|-- .env                      # 環境變數
 |-- .eslintrc.cjs
 |-- .firebaserc
 |-- .gitignore
