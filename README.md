@@ -1,7 +1,7 @@
 <div align="center">
   <img width="35" height="35" src="src/assets/ux_icon.jpg" alt="issuezy logo">
 
-### SUS 易用性量表
+### System Usability Scale Web Application
 
 </div>
 
