@@ -1,16 +1,18 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { reactive, watch, getCurrentInstance } from 'vue'
-import { createResult } from '@/api'
-import { useToast } from "primevue/usetoast"
+import { createResult } from '@/plugins/api'
+import { useToast } from 'primevue/usetoast'
 
-const { proxy: { $user } } = getCurrentInstance()
+const {
+  proxy: { $user },
+} = getCurrentInstance()
 const toast = useToast()
 const router = useRouter()
 
 const loginState = reactive({
   isAdmin: false,
-  projectCode: ''
+  projectCode: '',
 })
 const qaList = reactive([
   {
@@ -91,7 +93,7 @@ const navigatePage = () => {
 }
 
 const resetForm = () => {
-  qaList.map((el)=>el.ans = null)
+  qaList.map(el => (el.ans = null))
 }
 
 // API:
@@ -102,24 +104,35 @@ const onSubmit = async () => {
     console.log('送出成功', id)
     toast.add({ severity: 'success', summary: '送出成功', life: 3000 })
     resetForm()
-  } catch(e) {
+  } catch (e) {
     console.error('Error: ', e)
   }
 }
 
-watch(() => $user.loginState, (val)=> {
-  if(!val || Object.keys(val).length === 0) {
-    resetForm()
-    return
-  }
-  loginState.isAdmin = val?.isAdmin
-  loginState.projectCode = val?.projectCode
-}, {deep: true, immediate: true})
-
+watch(
+  () => $user.loginState,
+  val => {
+    if (!val || Object.keys(val).length === 0) {
+      resetForm()
+      return
+    }
+    loginState.isAdmin = val?.isAdmin
+    loginState.projectCode = val?.projectCode
+  },
+  { deep: true, immediate: true },
+)
 </script>
 
 <template>
-  <Button v-if="loginState.isAdmin" type="button" label="測試結果" badge="?" badgeClass="p-badge-danger" outlined @click="navigatePage"/>
+  <Button
+    v-if="loginState.isAdmin"
+    type="button"
+    label="測試結果"
+    badge="?"
+    badgeClass="p-badge-danger"
+    outlined
+    @click="navigatePage"
+  />
   <div class="w-full border-gray-200 bg-gray-50 md:bg-white rounded-lg overflow-hidden">
     <div class="hidden md:grid grid-cols-2 gap-4 mb-[10px] pr-[16px]">
       <ul class="col-start-2 flex flex-row">
@@ -166,9 +179,9 @@ watch(() => $user.loginState, (val)=> {
     </div>
   </div>
   <div class="flex w-full my-[40px]">
-    <button 
-      class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE]  disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
-      :disabled="qaList.some((el)=>!el.ans) || !loginState.projectCode"
+    <button
+      class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE] disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
+      :disabled="qaList.some(el => !el.ans) || !loginState.projectCode"
       @click="onSubmit"
     >
       送出

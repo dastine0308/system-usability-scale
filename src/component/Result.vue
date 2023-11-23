@@ -1,17 +1,19 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { ref, computed, onMounted, getCurrentInstance } from 'vue'
-import { useLoadResults } from '@/api'
+import { useLoadResults } from '@/plugins/api'
 import moment from 'moment'
 
-const { proxy: { $user } } = getCurrentInstance()
+const {
+  proxy: { $user },
+} = getCurrentInstance()
 
 const results = ref()
 const loading = ref(false)
 
-const average = computed(()=> {
-  if(!results.value || results.value.length === 0) return 0
-  const sum = results.value.map((el)=>(el.score)).reduce((accumulator, currentValue) => (accumulator + currentValue), 0)
+const average = computed(() => {
+  if (!results.value || results.value.length === 0) return 0
+  const sum = results.value.map(el => el.score).reduce((accumulator, currentValue) => accumulator + currentValue, 0)
   return (sum / results.value.length).toFixed(2)
 })
 
@@ -106,31 +108,31 @@ const getAdjective = score => {
 }
 
 // API:
-const fetchResults = async (code) => {
+const fetchResults = async code => {
   try {
-    loading.value = true;
+    loading.value = true
     const resp = await useLoadResults(code)
-    if(resp) {
-      results.value = resp.map((el, index)=>{
+    if (resp) {
+      results.value = resp.map((el, index) => {
         return {
-          rowIdx: index+1,
-          date: moment(new Date(el?.testDate?.seconds*1000)).format('YYYY/MM/DD hh:mm'),
+          rowIdx: index + 1,
+          date: moment(new Date(el?.testDate?.seconds * 1000)).format('YYYY/MM/DD hh:mm'),
           nps: getNPS(el.score),
           acceptable: getAcceptable(el.score),
           adjective: getAdjective(el.score),
           grade: getGrade(el.score),
-          score: el.score
+          score: el.score,
         }
       })
     }
-    loading.value = false;
-  } catch(e) {
+    loading.value = false
+  } catch (e) {
     console.log('Error:', e)
   }
 }
 
-onMounted(()=> {
-  if($user.loginState?.projectCode) {
+onMounted(() => {
+  if ($user.loginState?.projectCode) {
     fetchResults($user.loginState?.projectCode)
   }
 })
@@ -151,37 +153,37 @@ const handleBack = () => {
         <Column field="rowIdx" header="編號" sortable style="width: 10%"></Column>
         <Column field="date" header="測試日期" sortable style="width: 25%"></Column>
         <Column field="nps" header="NPS">
-          <template #body="{data}">
+          <template #body="{ data }">
             <div class="flex items-center">
-              <Badge :class="data.nps.bedgeStyle" :pt="{root: { class: 'rounded-full w-2 h-2 mr-3'}}"/>
+              <Badge :class="data.nps.bedgeStyle" :pt="{ root: { class: 'rounded-full w-2 h-2 mr-3' } }" />
               {{ data.nps.text }}
             </div>
           </template>
         </Column>
         <Column field="acceptable" header="Acceptable" style="width: 20%">
-          <template #body="{data}">
+          <template #body="{ data }">
             <div class="flex items-center">
-              <Badge :class="data.acceptable.bedgeStyle" :pt="{root: { class: 'rounded-full w-2 h-2 mr-3'}}"/>
+              <Badge :class="data.acceptable.bedgeStyle" :pt="{ root: { class: 'rounded-full w-2 h-2 mr-3' } }" />
               {{ data.acceptable.text }}
             </div>
           </template>
         </Column>
         <Column field="adjective" header="Adjective" style="width: 15%">
-          <template #body="{data}">
+          <template #body="{ data }">
             <div class="flex items-center">
-              <Badge :class="data.adjective.bedgeStyle" :pt="{root: { class: 'rounded-full w-2 h-2 mr-3'}}" />
-              {{ data.adjective.text }} 
+              <Badge :class="data.adjective.bedgeStyle" :pt="{ root: { class: 'rounded-full w-2 h-2 mr-3' } }" />
+              {{ data.adjective.text }}
             </div>
           </template>
         </Column>
         <Column field="grade" header="Grade" style="width: 10%">
-          <template #body="{data}">
+          <template #body="{ data }">
             {{ data.grade }}
           </template>
         </Column>
-        <Column field="score" header="SUS Score" sortable style="width: 20%" >
-          <template #body="{data}">
-            <p :class="{'text-danger': data.score < 68}">{{ data.score }}</p>
+        <Column field="score" header="SUS Score" sortable style="width: 20%">
+          <template #body="{ data }">
+            <p :class="{ 'text-danger': data.score < 68 }">{{ data.score }}</p>
           </template>
         </Column>
         <ColumnGroup type="footer">

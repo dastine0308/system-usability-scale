@@ -4,7 +4,7 @@ import PrimeVue from 'primevue/config'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import ColumnGroup from 'primevue/columngroup'
-import Row from 'primevue/row'        
+import Row from 'primevue/row'
 import Badge from 'primevue/badge'
 import Dropdown from 'primevue/dropdown'
 import Toast from 'primevue/toast'
@@ -20,7 +20,7 @@ import User from './plugins/user'
 
 import './style.css'
 import './layout.css'
-import "primevue/resources/themes/saga-blue/theme.css"
+import 'primevue/resources/themes/saga-blue/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 
@@ -28,7 +28,7 @@ const app = createApp(App)
 
 app.use(createPinia())
 
-app.use(PrimeVue, { ripple: true , pt: Tailwind })
+app.use(PrimeVue, { ripple: true, pt: Tailwind })
 app.use(ToastService)
 app.use(Router)
 app.use(User)
