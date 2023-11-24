@@ -109,7 +109,7 @@ ctrl + c
 
 1. Create a Firebase Project on the [Firebase Console](https://console.firebase.google.com/u/0/)
 
-2. Fill in your config variables in `.env.development` and `.env.production` file with the firebase config:
+2. Add `.env` file and fill in your Firebase config variables:
 ```
 VITE_API_KEY = "<apiKey>",
 VITE_AUTH_DOMAIN = "<authDomain>",
@@ -119,7 +119,7 @@ VITE_MESSAGING_SENDER_ID = "<messagingSenderId>",
 VITE_APP_ID = "<appId>",
 VITE_MEASUREMENT_ID = "<measurementId>"
 ```
-    
+
 3. Install the Firebase tools: `npm install -g firebase-tools` and log in `firebase login`
 
 4. Deploy it with `firebase deploy`
