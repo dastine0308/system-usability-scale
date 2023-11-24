@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="35" height="35" src="src/assets/ux_icon.jpg" alt="issuezy logo">
+  <img width="35" height="35" src="src/assets/imgs/ux_icon.jpg" alt="issuezy logo">
 
 ### System Usability Scale Web Application
 
@@ -48,16 +48,16 @@ UI@蔡永霖 2023 | F2E@Dastine 2023
 ## Key features
 
 **Answer the survey** based on SUS questions.
-![](src/assets//SUS_demo2-1.png)
+![](src/assets/imgs/SUS_demo2-1.png)
 
 **View test records** with table UI.
-![](src/assets//SUS_demo3-1.png)
-![](src/assets//SUS_demo3-2.png)
+![](src/assets/imgs/SUS_demo3-1.png)
+![](src/assets/imgs/SUS_demo3-2.png)
 
 ### Other features
 
 **Authentication** (Tester / Admin)
-![](src/assets/SUS_demo1.png)
+![](src/assets/imgs/SUS_demo1.png)
 
 ### Future features
 
@@ -136,10 +136,17 @@ VITE_MEASUREMENT_ID = "<measurementId>"
 |-- public                    # 不進行打包編譯的檔案，資料夾（不會壓縮、不會加 hash 值）e.g., icon
 |-- src
 |   |-- assets                # 靜態資源相關 e.g., 圖片
+|   |   |-- imgs              
+|   |   |__ style
+|   |   |   |-- vendors       # 第三方套件樣式
+|   |   |   |__ layout.css
 |   |-- components
-|   |   |-- LoginForm.vue     # 登入表單元件
-|   |   |-- Result.vue        # 測試結果元件
-|   |   |__ SurveyForm.vue    # 測試問卷元件
+|   |   |-- form
+|   |   |   |-- LoginForm.vue     # 登入表單元件
+|   |   |   |__ SurveyForm.vue    # 測試問卷元件
+|   |   |-- layout
+|   |   |   |-- LayoutHeader.vue  # header模版
+|   |   |   |__ LayoutContent.vue # 內容模版
 |   |-- plugins               # 共用插件
 |   |   |-- api
 |   |   |   |__ index.js
@@ -150,12 +157,12 @@ VITE_MEASUREMENT_ID = "<measurementId>"
 |   |__ stores                # pinia 全域狀態
 |   |   |-- pinia.js 
 |   |   |__ useUser.js
-|   |__ views
-|   |   |__ HomeView.vue      # 主頁面
+|   |__ pages
+|   |   |-- Index.vue         # 首頁
+|   |   |-- MainPage.vue      # 主要頁
+|   |   |__ Result.vue        # 結果頁
 |   |-- App.vue               # 專案的根元件
-|   |-- layout.css
-|   |-- main.js               # 專案的程式進入點
-|   |__ style.css
+|   |__ main.js               # 專案的程式進入點
 |-- .env                      # 環境變數
 |-- .eslintrc.cjs
 |-- .firebaserc
