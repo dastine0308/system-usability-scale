@@ -17,8 +17,6 @@
 - [Key features](#-key-features)
 - [Run locally](#-run-locally)
 - [Development process](#-development-process)
-  - [File structure](#-file-structure)
-  - [Api features](#-api-features)
 
 </details>
 
@@ -49,7 +47,7 @@ UI@蔡永霖 2023 | F2E@Dastine 2023
 
 ## Key features
 
-**Answer survey** based on SUS questions.
+**Answer the survey** based on SUS questions.
 ![](src/assets//SUS_demo2-1.png)
 
 **View test records** with table UI.
@@ -63,8 +61,9 @@ UI@蔡永霖 2023 | F2E@Dastine 2023
 
 ### Future features
 
-- Sign up new user
-- Delete test records througn UI button
+- Sign up a new user
+- Delete test records through the UI button
+- Use restful API
 - And more...
 
 ## Run locally
@@ -171,11 +170,3 @@ VITE_MEASUREMENT_ID = "<measurementId>"
 ```
 
 </details>
-
-#### API features
-```
-Methods           Urls                      Actions
-POST              api/results               add new Result
-GET               api/results               get all results
-GET               api/projects              get all projects
-```
