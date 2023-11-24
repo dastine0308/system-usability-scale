@@ -195,7 +195,7 @@ const handleBack = () => {
       </DataTable>
     </div>
     <div
-      class="flex m-auto bg-center bg-no-repeat bg-cover bg-[url('@/assets/sus-scale-adj.jpg')] max-w-[815px] min-h-[274px]"
+      class="flex m-auto bg-center bg-no-repeat bg-cover bg-[url('@/assets/imgs/sus-scale-adj.jpg')] max-w-[815px] min-h-[274px]"
     />
   </div>
   <div class="flex w-full my-[40px]">

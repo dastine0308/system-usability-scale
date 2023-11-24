@@ -1,19 +1,8 @@
 <script setup>
-import { useRouter } from 'vue-router'
-import { reactive, watch, getCurrentInstance } from 'vue'
-import { createResult } from '@/plugins/api'
-import { useToast } from 'primevue/usetoast'
+import { reactive } from 'vue'
 
-const {
-  proxy: { $user },
-} = getCurrentInstance()
-const toast = useToast()
-const router = useRouter()
+const $emit = defineEmits(['submitForm'])
 
-const loginState = reactive({
-  isAdmin: false,
-  projectCode: '',
-})
 const qaList = reactive([
   {
     label: '1. 我想我會願意經常使用這個網站/產品。',
@@ -88,51 +77,21 @@ const getScore = () => {
   return sum * 2.5
 }
 
-const navigatePage = () => {
-  router.push('/result')
-}
-
 const resetForm = () => {
   qaList.map(el => (el.ans = null))
 }
 
-// API:
-const onSubmit = async () => {
-  try {
-    const score = getScore()
-    const id = await createResult(loginState.projectCode, { score })
-    console.log('送出成功', id)
-    toast.add({ severity: 'success', summary: '送出成功', life: 3000 })
-    resetForm()
-  } catch (e) {
-    console.error('Error: ', e)
-  }
+const onSubmit = () => {
+  const score = getScore()
+  $emit('submitForm', score)
 }
 
-watch(
-  () => $user.loginState,
-  val => {
-    if (!val || Object.keys(val).length === 0) {
-      resetForm()
-      return
-    }
-    loginState.isAdmin = val?.isAdmin
-    loginState.projectCode = val?.projectCode
-  },
-  { deep: true, immediate: true },
-)
+defineExpose({
+  resetForm,
+})
 </script>
 
 <template>
-  <Button
-    v-if="loginState.isAdmin"
-    type="button"
-    label="測試結果"
-    badge="?"
-    badgeClass="p-badge-danger"
-    outlined
-    @click="navigatePage"
-  />
   <div class="w-full border-gray-200 bg-gray-50 md:bg-white rounded-lg overflow-hidden">
     <div class="hidden md:grid grid-cols-2 gap-4 mb-[10px] pr-[16px]">
       <ul class="col-start-2 flex flex-row">
@@ -178,6 +137,7 @@ watch(
       </ul>
     </div>
   </div>
+
   <div class="flex w-full my-[40px]">
     <button
       class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE] disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
@@ -187,7 +147,4 @@ watch(
       送出
     </button>
   </div>
-  <Toast />
 </template>
-
-<style></style>

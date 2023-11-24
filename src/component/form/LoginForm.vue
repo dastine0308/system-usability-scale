@@ -58,7 +58,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <form @submit="onSubmit" class="flex flex-col items-center px-20 py-8 gap-2 text-white" style="border-radius: 12px">
+  <form @submit="login" class="flex flex-col items-center px-20 py-8 gap-2 text-white" style="border-radius: 12px">
     <img src="@/assets/logo_favicon_white.svg" class="w-[35px] h-[35px] mb-4" />
     <span class="p-float-label w-full">
       <Dropdown

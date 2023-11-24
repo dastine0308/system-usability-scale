@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import SurveyForm from '../component/SurveyForm.vue'
-import Result from '../component/Result.vue'
+import MainPage from '@/pages/MainPage.vue'
+import Index from '@/pages/Index.vue'
+import Result from '@/pages/Result.vue'
+import user from '@/plugins/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,15 +11,30 @@ const router = createRouter({
       path: '/',
       name: 'Main',
       redirect: '/index',
-      component: HomeView,
+      component: MainPage,
       children: [
-        { path: '/index', name: 'Index', component: SurveyForm },
-        { path: '/result', name: 'Result', component: Result },
+        {
+          path: '/index',
+          name: 'Index',
+          component: Index,
+        },
+        {
+          path: '/result',
+          name: 'Result',
+          component: Result,
+          beforeEnter: (to, from, next) => {
+            if (!user.loginState?.isAdmin) {
+              router.replace({ path: '/' })
+            } else {
+              next()
+            }
+          },
+        },
       ]
     },
   ],
   // 每次切換路由，頁面滾動到頂部
-  scrollBehavior () {
+  scrollBehavior() {
     return { top: 0 }
   }
 })
