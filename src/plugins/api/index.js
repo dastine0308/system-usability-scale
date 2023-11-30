@@ -1,4 +1,4 @@
-import { getFirestore, collection, addDoc, query, where, getDocs, orderBy } from 'firebase/firestore'
+import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, deleteDoc, doc } from 'firebase/firestore'
 import { firebaseApp } from '../../../firebase/config'
 
 const db = getFirestore(firebaseApp)
@@ -14,6 +14,16 @@ export const createResult = async (code, input) => {
       testDate: new Date(),
     })
     return docRef.id
+  } catch (error) {
+    throw error
+  }
+}
+
+// 刪除測試結果
+export const deleteResultById = async (id) => {
+  try {
+    const docRef = await doc(db, 'results', id)
+    deleteDoc(docRef)
   } catch (error) {
     throw error
   }
