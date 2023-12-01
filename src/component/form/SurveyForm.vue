@@ -1,5 +1,7 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, defineProps } from 'vue'
+
+const $props = defineProps(['loginState'])
 
 const $emit = defineEmits(['submitForm'])
 
@@ -141,7 +143,7 @@ defineExpose({
   <div class="flex w-full my-[40px]">
     <button
       class="m-auto rounded-[20px] min-w-[100%] md:min-w-[352px] min-h-[40px] text-white enabled:bg-gradient-to-r from-[#4CAAF5] to-[#28B4BE] disabled:bg-[#F5F5F5] disabled:text-[#D9D9D9] disabled:border disabled:border-[#D9D9D9] disabled:cursor-not-allowed"
-      :disabled="qaList.some(el => !el.ans) || !loginState.projectCode"
+      :disabled="qaList.some(el => !el.ans) || !$props.loginState.projectCode"
       @click="onSubmit"
     >
       送出
