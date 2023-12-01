@@ -20,10 +20,10 @@ export const createResult = async (code, input) => {
 }
 
 // 刪除測試結果
-export const deleteResultById = async (id) => {
+export const deleteResultById = async id => {
   try {
     const docRef = await doc(db, 'results', id)
-    deleteDoc(docRef)
+    await deleteDoc(docRef)
   } catch (error) {
     throw error
   }
