@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { ref, computed, onMounted, getCurrentInstance } from 'vue'
-import { useLoadResults } from '@/plugins/api'
+import { useLoadResults, deleteResultById } from '@/plugins/api'
 import moment from 'moment'
 
 const {
@@ -116,6 +116,7 @@ const fetchResults = async code => {
       results.value = resp.map((el, index) => {
         return {
           rowIdx: index + 1,
+          id: el.id,
           date: moment(new Date(el?.testDate?.seconds * 1000)).format('YYYY/MM/DD hh:mm'),
           nps: getNPS(el.score),
           acceptable: getAcceptable(el.score),
@@ -129,6 +130,11 @@ const fetchResults = async code => {
   } catch (e) {
     console.log('Error:', e)
   }
+}
+
+const handleDelete = async data => {
+  await deleteResultById(data?.id)
+  fetchResults($user.loginState?.projectCode)
 }
 
 onMounted(() => {
@@ -151,7 +157,7 @@ const handleBack = () => {
     <div class="my-[40px]">
       <DataTable :value="results" tableStyle="min-width: 50rem" lazzy :loading="loading">
         <Column field="rowIdx" header="編號" sortable style="width: 10%"></Column>
-        <Column field="date" header="測試日期" sortable style="width: 25%"></Column>
+        <Column field="date" header="測試日期" sortable style="width: 20%"></Column>
         <Column field="nps" header="NPS">
           <template #body="{ data }">
             <div class="flex items-center">
@@ -181,15 +187,21 @@ const handleBack = () => {
             {{ data.grade }}
           </template>
         </Column>
-        <Column field="score" header="SUS Score" sortable style="width: 20%">
+        <Column field="score" header="SUS 分數" sortable style="width: 20%">
           <template #body="{ data }">
             <p :class="{ 'text-danger': data.score < 68 }">{{ data.score }}</p>
+          </template>
+        </Column>
+        <Column field="action" header="" style="width: 5%">
+          <template #body="{ data }">
+            <Button icon="pi pi-trash" text rounded severity="secondary" @click="handleDelete(data)" />
           </template>
         </Column>
         <ColumnGroup type="footer">
           <Row>
             <Column footer="平均:" :colspan="6" footerStyle="text-align:right" />
             <Column :footer="average" />
+            <Column />
           </Row>
         </ColumnGroup>
       </DataTable>
